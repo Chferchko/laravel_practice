@@ -7,7 +7,7 @@ namespace App\Feature\Post\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Route;
 
-class PostRouteServiceProvider extends ServiceProvider
+final class PostRouteServiceProvider extends ServiceProvider
 {
     /**
      * Register services.

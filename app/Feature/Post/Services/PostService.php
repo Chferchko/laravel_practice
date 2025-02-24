@@ -4,64 +4,32 @@ declare(strict_types=1);
 
 namespace App\Feature\Post\Services;
 
-use App\Feature\Post\Dto\CreatePostDto;
+use Illuminate\Database\Eloquent\Collection;
 use App\Feature\Post\Repositories\PostRepository;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
+use App\Feature\Post\Models\Post;
 
-class PostService
+final readonly class PostService
 {
 	public function __construct(
 		private PostRepository $postRepository
 	) {
 	}
 
-	public function showPosts(): View
+	public function savePost(Post $post): void
 	{
-		return view(
-			'post.index',
-			['posts' => $this->postRepository->getAll()]
-		);
+		$this->postRepository->save($post);
 	}
 
-	public function showPost(string $id): View
-	{
-		return view(
-			'post.show',
-			['post' => $this->postRepository->getById($id)]
-		);
-	}
-
-	public function showCreate(): View
-	{
-		return view('post.create');
-	}
-
-	public function showEdit(string $id): View
-	{
-		return view(
-			'post.edit',
-			['post' => $this->postRepository->getById($id)]
-		);
-	}
-
-	public function createPost(array $data): void
-	{
-		$this->postRepository->save($data);
-	}
-
-	public function updatePost(string $id, array $data): void
-	{
-		$this->postRepository->getById($id)->update($data);
-	}
-
-	public function deletePost(string $id): void
+	public function deletePost(int $id): void
 	{
 		$this->postRepository->getById($id)->delete();
-	}	
+	}
 
-	public function getPostData(Request $request): array
+	/**
+	 * @return Collection<Post>
+	 */
+	public function getAllPosts(): Collection
 	{
-		return CreatePostDto::fromRequest($request)->toArray();
+		return $this->postRepository->getAll();
 	}
 }

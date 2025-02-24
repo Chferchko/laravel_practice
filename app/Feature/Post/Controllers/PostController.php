@@ -4,65 +4,78 @@ declare(strict_types=1);
 
 namespace App\Feature\Post\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\View\View;
-use App\Feature\Post\Services\PostService;
 use Illuminate\Http\RedirectResponse;
+use App\Http\Controllers\Controller;
+use App\Feature\Post\Services\PostService;
+use App\Feature\Post\Models\Post;
+use App\Feature\Post\Requests\PostRequest;
 
-class PostController
+final class PostController extends Controller
 {
     public function __construct(
-        private PostService $postService
+        private PostService $postService,
     ) {
     }
 
     public function index(): View
     {
-        return $this->postService->showPosts();
+        return view(
+            'post.index',
+            ['posts' =>  $this->postService->getAllPosts()]
+        );
     }
 
-    public function show(string $id): View
+    public function show(Post $post): View
     {
-        return $this->postService->showPost($id);
+        return view(
+            'post.show',
+            ['post' => $post]
+        );
     }
 
     public function create(): View
     {
-        return $this->postService->showCreate();
+        return view('post.create');
     }
 
-    public function edit(string $id): View
+    public function edit(Post $post): View
     {
-        return $this->postService->showEdit($id);
-    }
-
-    public function store(Request $request): RedirectResponse
-    {
-        $this->postService->createPost(
-            $this->postService->getPostData($request)
+        return view(
+            'post.edit',
+            ['post' => $post]
         );
+    }
+
+    public function store(PostRequest $request): RedirectResponse
+    {
+        $this->saveOrUpdatePost(new Post(), $request);
 
         return redirect()->route('post.index');
     }
 
-    public function update(Request $request, string $id): RedirectResponse
+    public function update(Post $post, PostRequest $request): RedirectResponse
     {
-        $this->postService->updatePost(
-            $id,
-            $this->postService->getPostData($request)
-        );
+        $this->saveOrUpdatePost($post, $request);
 
-        return redirect()->route('post.show', $id);
+        return redirect()->route('post.show', $post->id);
     }
 
-    public function destroy(string $id): RedirectResponse
+    public function destroy(Post $post): RedirectResponse
     {
         try {
-            $this->postService->deletePost($id);
+            $this->postService->deletePost($post->id);
 
             return redirect()->route('post.index');
         } catch (\Exception $e) {
             return redirect()->route('post.index')->withErrors(['error' => $e->getMessage()]);
         }
+    }
+
+    private function saveOrUpdatePost(Post $post, PostRequest $request): void
+    {
+        $this->postService->savePost(
+            $post->fill($request->validated())
+        );
     }
 }

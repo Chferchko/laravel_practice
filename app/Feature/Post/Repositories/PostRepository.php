@@ -7,26 +7,21 @@ namespace App\Feature\Post\Repositories;
 use App\Feature\Post\Models\Post;
 use Illuminate\Database\Eloquent\Collection;
 
-class PostRepository
+final readonly class PostRepository
 {
 	public function getAll(): Collection
 	{
 		return Post::all();
 	}
 
-	public function getById(string $id): Post
+	public function getById(int $id): Post
 	{
 		return Post::findOrFail($id);
 	}
 
-	public function save(array $data): void
+	public function save(Post $post): void
 	{
-		Post::create($data);
-	}
-
-	public function update(Post $post, array $data): void
-	{
-		$post->update($data);
+		$post->save();
 	}
 
 	public function delete(Post $post): void
