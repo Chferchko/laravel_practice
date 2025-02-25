@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
+
 use App\Feature\Post\Controllers\PostController;
 
 Route::get('/posts', [PostController::class, 'index'])->name('post.index');

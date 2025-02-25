@@ -4,28 +4,43 @@ declare(strict_types=1);
 
 namespace App\Feature\Post\Repositories;
 
-use App\Feature\Post\Models\Post;
 use Illuminate\Database\Eloquent\Collection;
+
+use App\Feature\Post\Models\Post;
 
 final readonly class PostRepository
 {
-	public function getAll(): Collection
-	{
-		return Post::all();
-	}
+    public function getAll(): Collection
+    {
+        return Post::all();
+    }
 
-	public function getById(int $id): Post
-	{
-		return Post::findOrFail($id);
-	}
+    public function getById(int $id): Post
+    {
+        return Post::findOrFail($id);
+    }
 
-	public function save(Post $post): void
-	{
-		$post->save();
-	}
+    /**
+     * @throws \RuntimeException
+     */
+    public function save(Post $post): void
+    {
+        $result = $post->save();
 
-	public function delete(Post $post): void
-	{
-		$post->delete();
-	}
+        if ($result === false) {
+            throw new \RuntimeException('Failed to save post');
+        }
+    }
+
+    /**
+     * @throws \RuntimeException
+     */
+    public function delete(Post $post): void
+    {
+        $result = $post->delete();
+
+        if ($result === false) {
+            throw new \RuntimeException('Failed to delete post');
+        }
+    }
 }
