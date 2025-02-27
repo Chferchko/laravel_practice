@@ -10,7 +10,7 @@ abstract class AbstractDto
 {
     public static function fromArray(array $attributes): static
     {
-        $instance = new static($attributes);
+        $instance = new static();
 
         foreach ($attributes as $key => $value) {
             $setterMethod = sprintf('set%s', Str::studly($key));

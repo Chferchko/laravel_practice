@@ -6,13 +6,6 @@ namespace App\Feature\Post\Dto;
 
 use App\Infrastructure\Dto\AbstractDto;
 
-/**
- * @property-read string $title
- * @property-read string $description
- * @property-read string $content
- * @property-read string $image
- * @property-read int $likes
- */
 final class CreatePostDto extends AbstractDto
 {
     private string $title;
@@ -20,17 +13,14 @@ final class CreatePostDto extends AbstractDto
     private string $description;
     private ?string $image;
 
-    public function __construct(array $data)
-    {
-        $this->title = $data['title'];
-        $this->content = $data['content'];
-        $this->description = $data['description'];
-        $this->image = $data['image'] ?? null;
+    public function __construct(
+    ) {
     }
 
     public function setTitle(string $title): self
     {
         $this->title = $title;
+        
         return $this;
     }
 
@@ -42,6 +32,7 @@ final class CreatePostDto extends AbstractDto
     public function setContent(string $content): self
     {
         $this->content = $content;
+        
         return $this;
     }
 
@@ -53,6 +44,7 @@ final class CreatePostDto extends AbstractDto
     public function setDescription(string $description): self
     {
         $this->description = $description;
+        
         return $this;
     }
 
@@ -64,6 +56,7 @@ final class CreatePostDto extends AbstractDto
     public function setImage(?string $image): self
     {
         $this->image = $image;
+        
         return $this;
     }
 

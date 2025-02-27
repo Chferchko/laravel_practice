@@ -54,6 +54,13 @@ final readonly class PostService
         $this->postRepository->save($post);
     }
 
+    public function restorePost(int $id): void
+    {
+        $trashedPost = $this->postRepository->getTrashedById($id);
+
+        $this->postRepository->restore($trashedPost);
+    }
+
     /**
      * @return Collection<Post>
      */

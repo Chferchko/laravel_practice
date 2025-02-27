@@ -10,6 +10,9 @@ use App\Feature\Post\Models\Post;
 
 final readonly class PostRepository
 {
+    /**
+     * @return Collection<Post>
+     */
     public function getAll(): Collection
     {
         return Post::all();
@@ -19,10 +22,12 @@ final readonly class PostRepository
     {
         return Post::findOrFail($id);
     }
-
-    /**
-     * @throws \RuntimeException
-     */
+    
+    public function getTrashedById(int $id): Post
+    {
+        return Post::onlyTrashed()->findOrFail($id);
+    }
+    
     public function save(Post $post): void
     {
         $result = $post->save();
@@ -31,16 +36,22 @@ final readonly class PostRepository
             throw new \RuntimeException('Failed to save post');
         }
     }
-
-    /**
-     * @throws \RuntimeException
-     */
+    
     public function delete(Post $post): void
     {
         $result = $post->delete();
 
         if ($result === false) {
             throw new \RuntimeException('Failed to delete post');
+        }
+    }
+    
+    public function restore(Post $post): void
+    {
+        $result = $post->restore();
+
+        if ($result === false) {
+            throw new \RuntimeException('Failed to restore post');
         }
     }
 }

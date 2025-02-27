@@ -7,7 +7,6 @@ namespace App\Feature\Post\Controllers;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
-
 use App\Feature\Post\Services\PostService;
 use App\Feature\Post\Models\Post;
 use App\Feature\Post\Requests\CreatePostRequest;
@@ -16,6 +15,8 @@ use App\Feature\Post\Dto\CreatePostDto;
 
 final class PostController extends Controller
 {
+    private const SUCCESS_MESSAGE = 'Post successfully <span class="alert-post-custom">%s</span>';
+
     public function __construct(
         private PostService $postService,
     ) {
@@ -57,7 +58,9 @@ final class PostController extends Controller
         try {
             $post = $this->postService->createPost($createPostDto);
 
-            return redirect()->route('post.index')->with('success', sprintf('Post created: %d', $post->getKey()));
+            return redirect()->route('post.index')->with([
+                'success' => sprintf(self::SUCCESS_MESSAGE, 'created')
+            ]);
         } catch (\RuntimeException $e) {
 
             return redirect()->route('post.index')->with('error', $e->getMessage());
@@ -71,7 +74,9 @@ final class PostController extends Controller
         try {
             $this->postService->updatePost($post->id, $updatePostDto);
 
-            return redirect()->route('post.show', $post->id)->with('success', sprintf('Post updated: %d', $post->getKey()));
+            return redirect()->route('post.show', $post->id)->with([
+                'success' => sprintf(self::SUCCESS_MESSAGE, 'updated')
+            ]);
         } catch (\RuntimeException $e) {
 
             return redirect()->route('post.show', $post->id)->with('error', $e->getMessage());
@@ -83,7 +88,24 @@ final class PostController extends Controller
         try {
             $this->postService->deletePost($post->id);
 
-            return redirect()->route('post.index')->with('success', sprintf('Post deleted: %d', $post->getKey()));
+            return redirect()->route('post.index')->with([
+                'success' => sprintf(self::SUCCESS_MESSAGE, 'deleted'),
+                'deleted_post_id' => $post->getKey()
+            ]);
+        } catch (\RuntimeException $e) {
+
+            return redirect()->route('post.index')->with('error', $e->getMessage());
+        }
+    }
+
+    public function restore(Post $post): RedirectResponse
+    {
+        try {
+            $this->postService->restorePost($post->id);
+
+            return redirect()->route('post.index')->with([
+                'success' => sprintf(self::SUCCESS_MESSAGE, 'restored')
+            ]);
         } catch (\RuntimeException $e) {
 
             return redirect()->route('post.index')->with('error', $e->getMessage());
