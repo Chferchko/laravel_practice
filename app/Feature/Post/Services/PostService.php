@@ -4,64 +4,68 @@ declare(strict_types=1);
 
 namespace App\Feature\Post\Services;
 
+use Illuminate\Database\Eloquent\Collection;
+
 use App\Feature\Post\Dto\CreatePostDto;
+use App\Feature\Post\Models\Post;
 use App\Feature\Post\Repositories\PostRepository;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\Request;
 
-class PostService
+final readonly class PostService
 {
-	public function __construct(
-		private PostRepository $postRepository
-	) {
-	}
+    public function __construct(
+        private PostRepository $postRepository
+    ) {
+    }
 
-	public function showPosts(): View
-	{
-		return view(
-			'post.index',
-			['posts' => $this->postRepository->getAll()]
-		);
-	}
+    public function createPost(CreatePostDto $createPostDto): Post
+    {
+        $post = new Post();
 
-	public function showPost(string $id): View
-	{
-		return view(
-			'post.show',
-			['post' => $this->postRepository->getById($id)]
-		);
-	}
+        $post->title = $createPostDto->getTitle();
+        $post->description = $createPostDto->getDescription();
+        $post->content = $createPostDto->getContent();
+        $post->image = $createPostDto->getImage();
+        $post->likes = Post::LIKES_INITIAL_VALUE;
 
-	public function showCreate(): View
-	{
-		return view('post.create');
-	}
+        $this->postRepository->save($post);
 
-	public function showEdit(string $id): View
-	{
-		return view(
-			'post.edit',
-			['post' => $this->postRepository->getById($id)]
-		);
-	}
+        return $post;
+    }
 
-	public function createPost(array $data): void
-	{
-		$this->postRepository->save($data);
-	}
+    public function savePost(Post $post): void
+    {
+        $this->postRepository->save($post);
+    }
 
-	public function updatePost(string $id, array $data): void
-	{
-		$this->postRepository->getById($id)->update($data);
-	}
+    public function deletePost(int $id): void
+    {
+        $this->postRepository->getById($id)->delete();
+    }
 
-	public function deletePost(string $id): void
-	{
-		$this->postRepository->getById($id)->delete();
-	}	
+    public function updatePost(int $id, CreatePostDto $createPostDto): void
+    {
+        $post = $this->postRepository->getById($id);
 
-	public function getPostData(Request $request): array
-	{
-		return CreatePostDto::fromRequest($request)->toArray();
-	}
+        $post->title = $createPostDto->getTitle();
+        $post->description = $createPostDto->getDescription();
+        $post->content = $createPostDto->getContent();
+        $post->image = $createPostDto->getImage();
+
+        $this->postRepository->save($post);
+    }
+
+    public function restorePost(int $id): void
+    {
+        $trashedPost = $this->postRepository->getTrashedById($id);
+
+        $this->postRepository->restore($trashedPost);
+    }
+
+    /**
+     * @return Collection<Post>
+     */
+    public function getAllPosts(): Collection
+    {
+        return $this->postRepository->getAll();
+    }
 }

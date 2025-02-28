@@ -7,7 +7,7 @@ namespace App\Feature\Post\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 
-class PostViewServiceProvider extends ServiceProvider
+final class PostViewServiceProvider extends ServiceProvider
 {
 	/**
 	 * Register services.

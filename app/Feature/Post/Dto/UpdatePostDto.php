@@ -6,7 +6,7 @@ namespace App\Feature\Post\Dto;
 
 use App\Infrastructure\Dto\AbstractDto;
 
-final class CreatePostDto extends AbstractDto
+final class UpdatePostDto extends AbstractDto
 {
     private string $title;
     private string $content;
@@ -20,7 +20,7 @@ final class CreatePostDto extends AbstractDto
     public function setTitle(string $title): self
     {
         $this->title = $title;
-        
+
         return $this;
     }
 
@@ -32,7 +32,7 @@ final class CreatePostDto extends AbstractDto
     public function setContent(string $content): self
     {
         $this->content = $content;
-        
+
         return $this;
     }
 
@@ -44,7 +44,7 @@ final class CreatePostDto extends AbstractDto
     public function setDescription(string $description): self
     {
         $this->description = $description;
-        
+
         return $this;
     }
 
@@ -56,7 +56,7 @@ final class CreatePostDto extends AbstractDto
     public function setImage(?string $image): self
     {
         $this->image = $image;
-        
+
         return $this;
     }
 
